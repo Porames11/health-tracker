@@ -240,6 +240,8 @@
         </div>
         <input type="file" id="foodPhotoInput" accept="image/*" style="display:none" onchange="handleFoodPhotoSelect(event)">
         <div id="foodPhotoPreview"></div>
+        <button type="button" class="btn ai-photo-btn" id="analyzeFoodPhotoBtn" onclick="analyzeFoodPhoto()" disabled>✨ วิเคราะห์รูปด้วย AI</button>
+        <p class="ai-photo-status" id="aiPhotoStatus">ถ่ายรูปไว้ก่อนได้ ระบบวิเคราะห์ต้องเชื่อม AI ผ่านเซิร์ฟเวอร์ที่ปลอดภัย</p>
       </div>
       <div class="form-group">
         <label>หมายเหตุ</label>
