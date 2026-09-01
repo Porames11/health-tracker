@@ -64,8 +64,11 @@
     <div class="modal-body">
       <div class="quick-add-grid">
         <button class="quick-add-card" onclick="closeModal('quickAddModal'); openWeightModal()"><span>⚖️</span><strong>น้ำหนัก</strong><small>ชั่งวันนี้</small></button>
+        <button class="quick-add-card" onclick="closeModal('quickAddModal'); openWaterModal()"><span>💧</span><strong>น้ำดื่ม</strong><small>บันทึกการดื่มน้ำ</small></button>
         <button class="quick-add-card" onclick="closeModal('quickAddModal'); openFoodModal()"><span>🍽️</span><strong>อาหาร</strong><small>เพิ่มมื้ออาหาร</small></button>
         <button class="quick-add-card" onclick="closeModal('quickAddModal'); openWorkoutModal()"><span>🏋️</span><strong>ออกกำลัง</strong><small>บันทึกการฝึก</small></button>
+        <button class="quick-add-card" onclick="closeModal('quickAddModal'); openFastingModal()"><span>⏱️</span><strong>IF Fasting</strong><small>จับเวลาอดอาหาร</small></button>
+        <button class="quick-add-card" onclick="closeModal('quickAddModal'); openMealRecommendModal()"><span>💡</span><strong>แนะนำมื้อ</strong><small>คำนวณโควต้า</small></button>
       </div>
     </div>
   </div>
@@ -88,6 +91,130 @@
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('weightModal')">ยกเลิก</button>
       <button class="btn btn-primary" onclick="saveWeightRecord()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- บันทึกน้ำดื่ม -->
+<div class="modal-overlay" id="waterModal">
+  <div class="modal modal-sm">
+    <button class="modal-close" onclick="closeModal('waterModal')">×</button>
+    <h2>💧 บันทึกการดื่มน้ำ</h2>
+    <div class="modal-body">
+      <input type="hidden" id="editWaterId">
+      <div class="form-group">
+        <label>ปริมาณน้ำดื่ม (มล. / ml)</label>
+        <input type="number" class="form-input" id="waterValue" min="10" max="5000" step="10" placeholder="เช่น 250" inputmode="numeric">
+      </div>
+      <div class="water-presets-grid">
+        <button type="button" class="preset-chip" onclick="setWaterModalAmount(250)">🥛 250 ml</button>
+        <button type="button" class="preset-chip" onclick="setWaterModalAmount(500)">🧴 500 ml</button>
+        <button type="button" class="preset-chip" onclick="setWaterModalAmount(750)">🥤 750 ml</button>
+        <button type="button" class="preset-chip" onclick="setWaterModalAmount(1000)">🫙 1,000 ml</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>วันที่</label><input type="date" class="form-input" id="waterDate"></div>
+        <div class="form-group"><label>เวลา</label><input type="time" class="form-input" id="waterTime"></div>
+      </div>
+      <div class="form-group"><label>หมายเหตุ</label><textarea class="form-textarea" id="waterNote" rows="2" placeholder="เช่น น้ำเปล่า, น้ำแร่, ชาไม่ใส่น้ำตาล"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('waterModal')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveWaterRecord()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+   MODAL: Intermittent Fasting (IF Tracker)
+   ════════════════════════════════════════════ -->
+<div class="modal-overlay" id="fastingModal">
+  <div class="modal modal-md">
+    <button class="modal-close" onclick="closeModal('fastingModal')">×</button>
+    <h2>⏱️ จัดการเวลา Fasting (IF)</h2>
+    <div class="modal-body">
+      <input type="hidden" id="editFastingId">
+      <div class="form-group">
+        <label>เลือกสูตร Fasting</label>
+        <div class="fasting-protocols-grid">
+          <button type="button" class="protocol-chip" data-hours="16" onclick="selectFastingProtocol(16, this)">
+            <strong>16:8</strong>
+            <small>ยอดนิยม (16 ชม.)</small>
+          </button>
+          <button type="button" class="protocol-chip" data-hours="18" onclick="selectFastingProtocol(18, this)">
+            <strong>18:6</strong>
+            <small>เผาผลาญไว (18 ชม.)</small>
+          </button>
+          <button type="button" class="protocol-chip" data-hours="20" onclick="selectFastingProtocol(20, this)">
+            <strong>20:4</strong>
+            <small>Warrior Diet (20 ชม.)</small>
+          </button>
+          <button type="button" class="protocol-chip" data-hours="14" onclick="selectFastingProtocol(14, this)">
+            <strong>14:10</strong>
+            <small>ผู้เริ่มต้น (14 ชม.)</small>
+          </button>
+          <button type="button" class="protocol-chip" data-hours="23" onclick="selectFastingProtocol(23, this)">
+            <strong>OMAD</strong>
+            <small>มื้อเดียว (23 ชม.)</small>
+          </button>
+          <button type="button" class="protocol-chip" data-hours="custom" onclick="selectFastingProtocol('custom', this)">
+            <strong>กำหนดเอง</strong>
+            <small>ระบุชั่วโมง</small>
+          </button>
+        </div>
+      </div>
+      <div class="form-group" id="customTargetHoursGroup" style="display:none;">
+        <label>เป้าหมายชั่วโมงที่อด (ชม. / Hours)</label>
+        <input type="number" class="form-input" id="fastingTargetHours" min="1" max="168" value="16">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>วันที่เริ่มอดอาหาร</label>
+          <input type="date" class="form-input" id="fastingStartDate">
+        </div>
+        <div class="form-group">
+          <label>เวลาที่เริ่มอดอาหาร</label>
+          <input type="time" class="form-input" id="fastingStartTime">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>หมายเหตุ / ความรู้สึก</label>
+        <textarea class="form-textarea" id="fastingNote" rows="2" placeholder="เช่น ดื่มน้ำเปล่า/กาแฟดำ รู้สึกมีสมาธิดี"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('fastingModal')">ปิด</button>
+      <button class="btn btn-primary" id="saveFastingBtn" onclick="saveFastingSession()">เริ่ม Fasting</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+   MODAL: Smart Meal Recommender (แนะนำอาหารอัจฉริยะ)
+   ════════════════════════════════════════════ -->
+<div class="modal-overlay" id="mealRecommendModal">
+  <div class="modal modal-lg">
+    <button class="modal-close" onclick="closeModal('mealRecommendModal')">×</button>
+    <h2>💡 แนะนำมื้ออาหารอัจฉริยะ</h2>
+    <div class="modal-body">
+      <div class="recommend-budget-banner" id="recommendBudgetBanner">
+        <!-- โหลดข้อมูลโควต้าที่เหลือโดย JS -->
+      </div>
+      <div class="recommend-filters-scroll">
+        <button class="recommend-filter-chip active" data-filter="best" onclick="setRecommendFilter('best')">🎯 พอดีโควต้า</button>
+        <button class="recommend-filter-chip" data-filter="high-protein" onclick="setRecommendFilter('high-protein')">💪 โปรตีนสูง (20g+)</button>
+        <button class="recommend-filter-chip" data-filter="clean" onclick="setRecommendFilter('clean')">🥗 แคลต่ำ &lt; 300</button>
+        <button class="recommend-filter-chip" data-filter="7-eleven" onclick="setRecommendFilter('7-eleven')">🏪 7-Eleven / ด่วน</button>
+        <button class="recommend-filter-chip" data-filter="dish" onclick="setRecommendFilter('dish')">🍛 อาหารตามสั่ง</button>
+        <button class="recommend-filter-chip" data-filter="noodle" onclick="setRecommendFilter('noodle')">🍜 ก๋วยเตี๋ยว / เส้น</button>
+        <button class="recommend-filter-chip" data-filter="beverage" onclick="setRecommendFilter('beverage')">🥤 เครื่องดื่ม / โปรตีนเชค</button>
+      </div>
+      <div class="recommend-cards-container" id="recommendCardsContainer">
+        <!-- โหลดการ์ดเมนูโดย JS -->
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('mealRecommendModal')">ปิด</button>
     </div>
   </div>
 </div>
@@ -119,6 +246,12 @@
           <div class="form-group" style="flex:0.8">
             <label>ไขมัน (g)</label>
             <input type="number" class="form-input" id="goalFat" placeholder="65" min="0" max="200">
+          </div>
+        </div>
+        <div class="form-row" style="margin-top:8px;">
+          <div class="form-group">
+            <label>น้ำดื่มเป้าหมาย (มล. / ml)</label>
+            <input type="number" class="form-input" id="goalWater" placeholder="2000" min="500" max="10000" step="50">
           </div>
         </div>
       </div>
@@ -331,6 +464,9 @@
           <div class="form-group"><label>โปรตีน (g)</label><input type="number" class="form-input" id="goalTargetProtein" placeholder="130" step="0.1"></div>
           <div class="form-group"><label>คาร์บ (g)</label><input type="number" class="form-input" id="goalTargetCarbs" placeholder="220" step="0.1"></div>
           <div class="form-group"><label>ไขมัน (g)</label><input type="number" class="form-input" id="goalTargetFat" placeholder="65" step="0.1"></div>
+        </div>
+        <div class="form-row" style="margin-top:8px;">
+          <div class="form-group"><label>น้ำดื่มเป้าหมาย (มล. / ml)</label><input type="number" class="form-input" id="goalTargetWater" placeholder="2000" min="500" max="10000" step="50"></div>
         </div>
       </div>
       <div class="settings-section">
